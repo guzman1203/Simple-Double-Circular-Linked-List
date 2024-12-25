@@ -1,0 +1,125 @@
+#include <iostream>
+using namespace std;
+
+class Node {
+public:
+    int data;
+    Node* next;
+    Node() : data(0), next(nullptr) {}
+    Node(int value) : data(value), next(nullptr) {}
+    friend class CLinkedList;
+};
+
+class CLinkedList {
+private:
+    int numNodes;
+    Node* head;
+    Node* tail;
+public:
+    CLinkedList();
+    ~CLinkedList();
+    void addBack(int x);
+    void addFront(int x);
+    int removeFront();
+    void print();
+    int getSize() { return numNodes; }
+    void addAfterIndex(int index, int x);
+};
+
+CLinkedList::CLinkedList() : numNodes(0), head(nullptr), tail(nullptr) {}
+
+CLinkedList::~CLinkedList() {
+    while (numNodes > 0) {
+        removeFront();
+    }
+}
+
+void CLinkedList::addBack(int x) {
+    Node* newNode = new Node(x);
+    if (numNodes == 0) {
+        head = tail = newNode;
+        newNode->next = head;
+    } else {
+        tail->next = newNode;
+        newNode->next = head;
+        tail = newNode;
+    }
+    numNodes++;
+}
+
+void CLinkedList::addFront(int x) {
+    Node* newNode = new Node(x);
+    if (numNodes == 0) {
+        head = tail = newNode;
+        newNode->next = head;
+    } else {
+        newNode->next = head;
+        tail->next = newNode;
+        head = newNode;
+    }
+    numNodes++;
+}
+
+int CLinkedList::removeFront() {
+    if (numNodes == 0) {
+        cout << "List is empty. Nothing to remove.\n";
+        return -1;
+    }
+    int data = head->data;
+    if (numNodes == 1) {
+        delete head;
+        head = tail = nullptr;
+    } else {
+        Node* temp = head;
+        head = head->next;
+        tail->next = head;
+        delete temp;
+    }
+    numNodes--;
+    return data;
+}
+
+void CLinkedList::print() {
+    if (numNodes == 0) {
+        cout << "List is empty.\n";
+        return;
+    }
+    Node* current = head;
+    do {
+        cout << current->data << " ";
+        current = current->next;
+    } while (current != head);
+    cout << endl;
+}
+
+void CLinkedList::addAfterIndex(int index, int x) {
+    if (index < 0 || index >= numNodes) {
+        cout << "Index out of bounds.\n";
+        return;
+    }
+    Node* newNode = new Node(x);
+    Node* current = head;
+    for (int i = 0; i < index; i++) {
+        current = current->next;
+    }
+    newNode->next = current->next;
+    current->next = newNode;
+    if (current == tail) {
+        tail = newNode;
+    }
+    numNodes++;
+}
+
+int main() {
+    CLinkedList list;
+    list.addFront(3);
+    list.addBack(4);
+    list.addBack(5);
+    list.addBack(7);
+    list.addBack(12);
+    list.addBack(15);
+    list.addBack(19);
+    list.addAfterIndex(4, 4);
+    list.print();
+    return 0;
+}
